@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 # 
 # Simple script to monitor PTT boards
+# Usage: ptt-monitor.py [board_name] [page_count]
 
 
 import requests
 from bs4 import BeautifulSoup
 import urllib.parse
+import sys
 
-INDEX = "https://www.ptt.cc/bbs/Aviation/index.html"
 NOT_EXIST = BeautifulSoup('<a>本文已被刪除</a>', 'lxml').a
 
 def get_posts_on_page(url):
@@ -46,10 +47,16 @@ def get_postlinks(num):
     return links
 
 if __name__ == '__main__':
-    page = 2
+    if len(sys.argv) != 3:
+        print("Usage: {0} [board_name] [page_count]".format(sys.argv[0]))
+    else:
+        INDEX = "https://www.ptt.cc/bbs/"+sys.argv[1]+"/index.html"
+        page = int(sys.argv[2])
 
-    print(get_postlinks(page))
-    #for post in get_pages(page):
-    #    print(post['push'], post['title'], post['date'], post['author'])
+    #print(get_postlinks(page))
+    url_prefix='https://www.ptt.cc'
+    for post in get_pages(page):
+        url = url_prefix+str(post['link'])
+        print(post['push'], post['title'], post['date'], post['author'], url)
 
 
